@@ -1,0 +1,31 @@
+{
+    "name": "acelaya/expressive-slim-router",
+    "description": "A router for Zend Expressive based on Slim framework's implementation",
+    "type": "Library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alejandro Celaya",
+            "email": "alejandro@alejandrocelaya.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Acelaya\\Expressive\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AcelayaTest\\Expressive\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=5.5",
+        "slim/slim": "^2.6",
+        "zendframework/zend-expressive": "^0.3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "squizlabs/php_codesniffer": "^2.3"
+    }
+}
