@@ -15,7 +15,7 @@ I decided to do this implementation because Slim's router supports optional para
 
 Install this package with composer
 
-`composer require acelaya/expressive-slim-container`
+`composer require acelaya/expressive-slim-router`
 
 ## Usage
 
