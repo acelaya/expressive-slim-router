@@ -1,4 +1,5 @@
 <?php
+namespace AcelayaTest\Expressive\Factory;
 
 use Acelaya\Expressive\Router\SlimRouter;
 use Acelaya\Expressive\Factory\SlimRouterFactory;
