@@ -47,7 +47,10 @@ class Common extends ContainerConfig
 {
     public function define(Container $di)
     {
-        $di->set(RouterInterface::class, $di->lazyGetCall(SlimRouterFactory::class, '__invoke', $di));
+        $di->set(
+            RouterInterface::class,
+            $di->lazyGetCall(SlimRouterFactory::class, '__invoke', $di)
+        );
         // [...]
     }
 }
