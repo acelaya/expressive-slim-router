@@ -9,7 +9,7 @@
 
 A router for Zend Expressive based on Slim framework's implementation.
 
-I decided to do this implementation because Slim's router supports optional params at the beginning of the path, while other Expressive supported routers doesn't.
+I decided to do this implementation because Slim's router supports optional params at the beginning of the path, while other Expressive supported routers don't.
 
 ## Installation
 
