@@ -3,7 +3,7 @@ namespace Acelaya\Expressive\Router;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Router;
-use Zend\Expressive\Exception;
+use Zend\Expressive\Router\Exception;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;

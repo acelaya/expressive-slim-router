@@ -84,7 +84,7 @@ class SlimRouterTest extends TestCase
     }
 
     /**
-     * @expectedException \Zend\Expressive\Exception\RuntimeException
+     * @expectedException \Zend\Expressive\Router\Exception\RuntimeException
      */
     public function testGenerateUrlWithInvalidName()
     {
