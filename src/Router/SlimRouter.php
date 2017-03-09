@@ -64,7 +64,6 @@ class SlimRouter implements RouterInterface
 
     public function dummyCallable()
     {
-
     }
 
     /**
@@ -86,27 +85,34 @@ class SlimRouter implements RouterInterface
         $middleware = $params['middleware'];
         unset($params['middleware']);
 
-        return RouteResult::fromRouteMatch(
-            $matchedRoute->getName(),
+        $route = new Route(
+            $matchedRoute->getPattern(),
             $middleware,
-            $params
+            $matchedRoute->getHttpMethods(),
+            $matchedRoute->getName()
         );
+        return RouteResult::fromRoute($route, $params);
     }
 
     /**
      * Generate a URI from the named route.
      *
      * Takes the named route and any substitutions, and attempts to generate a
-     * URI from it.
+     * URI from it. Additional router-dependent options may be passed.
+     *
+     * The URI generated MUST NOT be escaped. If you wish to escape any part of
+     * the URI, this should be performed afterwards; consider passing the URI
+     * to league/uri to encode it.
      *
      * @see https://github.com/auraphp/Aura.Router#generating-a-route-path
      * @see http://framework.zend.com/manual/current/en/modules/zend.mvc.routing.html
      * @param string $name
      * @param array $substitutions
+     * @param array $options
      * @return string
      * @throws Exception\RuntimeException if unable to generate the given URI.
      */
-    public function generateUri($name, array $substitutions = [])
+    public function generateUri($name, array $substitutions = [], array $options = [])
     {
         if (! $this->router->hasNamedRoute($name)) {
             throw new Exception\RuntimeException(sprintf(

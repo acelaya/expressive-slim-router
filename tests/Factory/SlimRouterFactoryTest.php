@@ -1,10 +1,10 @@
 <?php
 namespace AcelayaTest\Expressive\Factory;
 
-use Acelaya\Expressive\Router\SlimRouter;
 use Acelaya\Expressive\Factory\SlimRouterFactory;
-use Interop\Container\ContainerInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use Acelaya\Expressive\Router\SlimRouter;
+use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 class SlimRouterFactoryTest extends TestCase
 {
