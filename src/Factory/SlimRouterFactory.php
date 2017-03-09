@@ -1,7 +1,7 @@
 <?php
 namespace Acelaya\Expressive\Factory;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Acelaya\Expressive\Router\SlimRouter;
 
 class SlimRouterFactory

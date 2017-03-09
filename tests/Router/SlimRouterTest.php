@@ -2,7 +2,7 @@
 namespace AcelayaTest\Expressive\Router;
 
 use Acelaya\Expressive\Router\SlimRouter;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Slim\Router;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
