@@ -21,8 +21,8 @@
     },
     "require": {
         "php": "^7.1",
+        "acelaya/slim-2-router": "^2.7",
         "psr/container": "^1.0",
-        "slim/slim": "^2.6",
         "zendframework/zend-expressive-router": "^3.0"
     },
     "require-dev": {
