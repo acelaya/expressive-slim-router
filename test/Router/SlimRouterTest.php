@@ -3,6 +3,8 @@ namespace AcelayaTest\Expressive\Router;
 
 use Acelaya\Expressive\Router\SlimRouter;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Server\MiddlewareInterface;
 use Slim\Router;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
@@ -18,29 +20,36 @@ class SlimRouterTest extends TestCase
      * @var Router
      */
     protected $slimRouter;
+    /**
+     * @var ObjectProphecy
+     */
+    protected $middleware;
 
     public function setUp()
     {
         new SlimRouter();
         $this->slimRouter = new Router();
         $this->router = new SlimRouter($this->slimRouter);
+        $this->middleware = $this->prophesize(MiddlewareInterface::class);
     }
 
     public function testAddRoute()
     {
-        $this->router->addRoute(new Route('/foo(/:bar)', 'Home', ['GET', 'POST'], 'home'));
+        $middleware = $this->middleware->reveal();
+        $this->router->addRoute(new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home'));
         $this->assertCount(1, $this->slimRouter->getNamedRoutes());
 
         /** @var \Slim\Route $route */
         $route = $this->slimRouter->getMatchedRoutes('GET', '/foo/baz')[0];
         $this->assertEquals('/foo(/:bar)', $route->getPattern());
         $this->assertEquals('home', $route->getName());
-        $this->assertEquals('Home', $route->getParams()['middleware']);
+        $this->assertEquals($middleware, $route->getParams()['middleware']);
     }
 
     public function testAddRouteWithOptions()
     {
-        $route = new Route('/foo/:bar', 'Home', ['GET', 'POST'], 'home');
+        $middleware = $this->middleware->reveal();
+        $route = new Route('/foo/:bar', $middleware, ['GET', 'POST'], 'home');
         $route->setOptions([
             'conditions' => [
                 'bar' => 'es|en'
@@ -57,7 +66,8 @@ class SlimRouterTest extends TestCase
 
     public function testAddRouteWithAnyMethod()
     {
-        $route = new Route('/foo/bar', 'Home', Route::HTTP_METHOD_ANY, 'home');
+        $middleware = $this->middleware->reveal();
+        $route = new Route('/foo/bar', $middleware, Route::HTTP_METHOD_ANY, 'home');
         $this->router->addRoute($route);
 
         $this->assertCount(1, $this->slimRouter->getMatchedRoutes('GET', '/foo/bar'));
@@ -76,7 +86,8 @@ class SlimRouterTest extends TestCase
 
     public function testGenerateUrl()
     {
-        $route = new Route('/foo(/:bar)', 'Home', ['GET', 'POST'], 'home');
+        $middleware = $this->middleware->reveal();
+        $route = new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home');
         $this->router->addRoute($route);
 
         $this->assertEquals('/foo', $this->router->generateUri('home'));
@@ -88,7 +99,8 @@ class SlimRouterTest extends TestCase
      */
     public function testGenerateUrlWithInvalidName()
     {
-        $route = new Route('/foo(/:bar)', 'Home', ['GET', 'POST'], 'home');
+        $middleware = $this->middleware->reveal();
+        $route = new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home');
         $this->router->addRoute($route);
         $this->router->generateUri('invalidName');
     }
@@ -101,7 +113,8 @@ class SlimRouterTest extends TestCase
 
     public function testMatchValidRequest()
     {
-        $this->router->addRoute(new Route('/foo(/:bar)', 'Home', ['GET', 'POST'], 'home'));
+        $middleware = $this->middleware->reveal();
+        $this->router->addRoute(new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home'));
         $this->assertCount(1, $this->slimRouter->getNamedRoutes());
         $result = $this->router->match(new ServerRequest([], [], '/foo/bar', 'POST'));
         $this->assertTrue($result->isSuccess());
