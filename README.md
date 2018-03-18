@@ -19,53 +19,20 @@ Install this package with composer
 
 ## Usage
 
-You just need to register the provided factory in your services configuration, and then the `ApplicationFactory` will take care of it.
-
-**With Zend\ServiceManager:**
+You just need to register the include this package's `ConfigProvider` in your project's configuration.
 
 ```php
-use Acelaya\Expressive\Factory\SlimRouterFactory;
-use Zend\Expressive\Router\RouterInterface;
+<?php
+declare(strict_types=1);
 
-return [
-    'factories' => [
-        RouterInterface::class => SlimRouterFactory::class
-    ]
-    // [...]
-]
+$aggregator = new ConfigAggregator([
+    // ...
+
+    App\ConfigProvider::class,
+    Acelaya\Expressive\ConfigProvider::class,
+
+    // ...
+], '...');
 ```
 
-**With Aura.Di:**
-
-```php
-use Acelaya\Expressive\Factory\SlimRouterFactory;
-use Aura\Di\Container;
-use Aura\Di\ContainerConfig;
-use Zend\Expressive\Router\RouterInterface;
-
-class Common extends ContainerConfig
-{
-    public function define(Container $di)
-    {
-        $di->set(
-            RouterInterface::class,
-            $di->lazyGetCall(SlimRouterFactory::class, '__invoke', $di)
-        );
-        // [...]
-    }
-}
-```
-
-**With Pimple interop:**
-
-```php
-use Acelaya\Expressive\Factory\SlimRouterFactory;
-use Interop\Container\Pimple\PimpleInterop as Pimple;
-use Zend\Expressive\Router\RouterInterface;
-
-$container = new Pimple();
-$container[RouterInterface::class] = new SlimRouterFactory();
-// [...]
-
-return $container;
-```
+If you are already using zend-component-installer, the `ConfigProvider` will be automatically registered for you.

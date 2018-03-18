@@ -37,7 +37,7 @@ class SlimRouter implements RouterInterface
     /**
      * @param Route $route
      */
-    public function addRoute(Route $route)
+    public function addRoute(Route $route): void
     {
         $slimRoute = new \Slim\Route($route->getPath(), [$this, 'dummyCallable']);
         $slimRoute->setName($route->getName());
@@ -70,11 +70,11 @@ class SlimRouter implements RouterInterface
      * @param  Request $request
      * @return RouteResult
      */
-    public function match(Request $request)
+    public function match(Request $request): RouteResult
     {
         $matchedRoutes = $this->router->getMatchedRoutes($request->getMethod(), $request->getUri()->getPath());
         if (count($matchedRoutes) === 0) {
-            return RouteResult::fromRouteFailure();
+            return RouteResult::fromRouteFailure(null);
         }
 
         /** @var \Slim\Route $matchedRoute */
@@ -112,7 +112,7 @@ class SlimRouter implements RouterInterface
      * @return string
      * @throws Exception\RuntimeException if unable to generate the given URI.
      */
-    public function generateUri($name, array $substitutions = [], array $options = [])
+    public function generateUri(string $name, array $substitutions = [], array $options = []): string
     {
         if (! $this->router->hasNamedRoute($name)) {
             throw new Exception\RuntimeException(sprintf(
