@@ -16,7 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AcelayaTest\\Expressive\\": "tests"
+            "AcelayaTest\\Expressive\\": "test"
         }
     },
     "require": {
@@ -31,7 +31,12 @@
         "zendframework/zend-diactoros": "^1.0"
     },
     "scripts": {
-        "ac:cs": "phpcs --standard=PSR2 --colors -p ./src ./tests",
-        "ac:test": "phpunit -c tests/phpunit.xml --coverage-clover build/clover.xml"
+        "ac:ci": [
+            "@ac:cs",
+            "@ac:test"
+        ],
+
+        "ac:cs": "phpcs --standard=PSR2 --colors -p ./src ./test",
+        "ac:test": "phpunit --coverage-clover build/clover.xml"
     }
 }
