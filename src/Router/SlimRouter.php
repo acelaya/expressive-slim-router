@@ -13,7 +13,11 @@ class SlimRouter implements RouterInterface
     /**
      * @var Router
      */
-    protected $router;
+    private $router;
+    /**
+     * @var Route[]
+     */
+    private $routes;
 
     public function __construct(Router $router = null)
     {
@@ -22,6 +26,7 @@ class SlimRouter implements RouterInterface
         }
 
         $this->router = $router;
+        $this->routes = [];
     }
 
     /**
@@ -39,27 +44,7 @@ class SlimRouter implements RouterInterface
      */
     public function addRoute(Route $route): void
     {
-        $slimRoute = new \Slim\Route($route->getPath(), [$this, 'dummyCallable']);
-        $slimRoute->setName($route->getName());
-
-        $allowedMethods = $route->getAllowedMethods();
-        $slimRoute->via($allowedMethods === Route::HTTP_METHOD_ANY ? 'ANY' : $allowedMethods);
-
-        // Process options
-        $options = $route->getOptions();
-        if (isset($options['conditions']) && is_array($options['conditions'])) {
-            $slimRoute->setConditions($options['conditions']);
-        }
-        // The middleware is merged with the rest of the route params
-        $params = [
-            'middleware' => $route->getMiddleware()
-        ];
-        if (isset($options['defaults']) && is_array($options['defaults'])) {
-            $params = array_merge($options['defaults'], $params);
-        }
-        $slimRoute->setParams($params);
-
-        $this->router->map($slimRoute);
+        $this->routes[] = $route;
     }
 
     public function dummyCallable()
@@ -72,6 +57,8 @@ class SlimRouter implements RouterInterface
      */
     public function match(Request $request): RouteResult
     {
+        $this->injectRoutes();
+
         $matchedRoutes = $this->router->getMatchedRoutes($request->getMethod(), $request->getUri()->getPath());
         if (count($matchedRoutes) === 0) {
             return RouteResult::fromRouteFailure(null);
@@ -114,6 +101,8 @@ class SlimRouter implements RouterInterface
      */
     public function generateUri(string $name, array $substitutions = [], array $options = []): string
     {
+        $this->injectRoutes();
+
         if (! $this->router->hasNamedRoute($name)) {
             throw new Exception\RuntimeException(sprintf(
                 'Cannot generate URI based on route "%s"; route not found',
@@ -122,5 +111,38 @@ class SlimRouter implements RouterInterface
         }
 
         return $this->router->urlFor($name, $substitutions);
+    }
+
+    private function injectRoutes(): void
+    {
+        foreach ($this->routes as $key => $route) {
+            $this->injectRoute($route);
+            unset($this->routes[$key]);
+        }
+    }
+
+    private function injectRoute(Route $route): void
+    {
+        $slimRoute = new \Slim\Route($route->getPath(), [$this, 'dummyCallable']);
+        $slimRoute->setName($route->getName());
+
+        $allowedMethods = $route->getAllowedMethods();
+        $slimRoute->via($allowedMethods === Route::HTTP_METHOD_ANY ? 'ANY' : $allowedMethods);
+
+        // Process options
+        $options = $route->getOptions();
+        if (isset($options['conditions']) && is_array($options['conditions'])) {
+            $slimRoute->setConditions($options['conditions']);
+        }
+        // The middleware is merged with the rest of the route params
+        $params = [
+            'middleware' => $route->getMiddleware()
+        ];
+        if (isset($options['defaults']) && is_array($options['defaults'])) {
+            $params = array_merge($options['defaults'], $params);
+        }
+        $slimRoute->setParams($params);
+
+        $this->router->map($slimRoute);
     }
 }

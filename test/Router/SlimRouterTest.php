@@ -37,6 +37,8 @@ class SlimRouterTest extends TestCase
     {
         $middleware = $this->middleware->reveal();
         $this->router->addRoute(new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home'));
+        $this->injectRoutes();
+
         $this->assertCount(1, $this->slimRouter->getNamedRoutes());
 
         /** @var \Slim\Route $route */
@@ -59,6 +61,7 @@ class SlimRouterTest extends TestCase
             ]
         ]);
         $this->router->addRoute($route);
+        $this->injectRoutes();
 
         $this->assertCount(1, $this->slimRouter->getMatchedRoutes('GET', '/foo/es'));
         $this->assertCount(0, $this->slimRouter->getMatchedRoutes('GET', '/foo/baz', true));
@@ -69,6 +72,7 @@ class SlimRouterTest extends TestCase
         $middleware = $this->middleware->reveal();
         $route = new Route('/foo/bar', $middleware, Route::HTTP_METHOD_ANY, 'home');
         $this->router->addRoute($route);
+        $this->injectRoutes();
 
         $this->assertCount(1, $this->slimRouter->getMatchedRoutes('GET', '/foo/bar'));
         $this->assertCount(1, $this->slimRouter->getMatchedRoutes('POST', '/foo/bar'));
@@ -115,8 +119,18 @@ class SlimRouterTest extends TestCase
     {
         $middleware = $this->middleware->reveal();
         $this->router->addRoute(new Route('/foo(/:bar)', $middleware, ['GET', 'POST'], 'home'));
+        $this->injectRoutes();
+
         $this->assertCount(1, $this->slimRouter->getNamedRoutes());
         $result = $this->router->match(new ServerRequest([], [], '/foo/bar', 'POST'));
         $this->assertTrue($result->isSuccess());
+    }
+
+    private function injectRoutes()
+    {
+        $ref = new \ReflectionObject($this->router);
+        $method = $ref->getMethod('injectRoutes');
+        $method->setAccessible(true);
+        $method->invoke($this->router);
     }
 }
